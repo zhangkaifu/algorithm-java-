@@ -1,84 +1,61 @@
 package queen;
 public class EightQueen {
-	public static int[][] iChessBoard = new int[8][8];//8*8æ£‹ç›˜
-	public static int[][] iIfAvailable = new int[8][8];//æ ‡è®°æ£‹ç›˜ä¸Šçš„æ ¼å­æ˜¯å¦å¯è½å­
-	public static int iCount = 0;//è®°å½•å·²ç¡®å®šä½ç½®çš„çš‡åæ•°é‡
-	public static int iCountNumber=0;
-	public static void main(String[] args){
-		//åˆå§‹åŒ–
-		for(int m=0; m<8; m++){
-			for(int n=0; n<8; n++){
-				iChessBoard[m][n] = 0;
-				iIfAvailable[m][n] = 0;
-			}
-		}
-		arrange(1,3);//å¼€å§‹è½å­ï¼Œå¯ä»¥ä»æ£‹ç›˜ä¸Šä»»æ„ä½ç½®å¼€å§‹
+	public static int iNum = 0; // ÀÛ¼Æ·½°¸×ÜÊı
+	public static final int MAXQUEEN = 8;// »Êºó¸öÊı£¬Í¬Ê±Ò²ÊÇÆåÅÌĞĞÁĞ×ÜÊı
+	public static int[] iCols = new int[MAXQUEEN]; // ¶¨ÒåiColsÊı×é£¬±íÊ¾nÁĞÆå×Ó°Ú·ÅÇé¿ö
+ 
+	public EightQueen() {
+		// ºËĞÄº¯Êı,´ÓµÚ0ÁĞ¿ªÊ¼
+		getArrangement(0);
+		System.out.println(MAXQUEEN + "»ÊºóÎÊÌâÓĞ" + iNum + "ÖÖ°Ú·Å·½·¨¡£");
 	}
-	public static void arrange(int i, int j){
-		iCount++;
-		iChessBoard[i][j] = iCount;
-		int[][] changed = new int[8][8];
-		for(int m=0; m<8; m++){
-			for(int n=0; n<8; n++){
-				changed[m][n] = 0;
+ 
+	public void getArrangement(int n) {
+		// ±éÀú¸ÃÁĞËùÓĞ²»ºÏ·¨µÄĞĞ£¬²¢ÓÃrowsÊı×é¼ÇÂ¼£¬²»ºÏ·¨¼´rows[i]=true
+		boolean[] rows = new boolean[MAXQUEEN];
+		for (int i = 0; i < n; i++) {
+			rows[iCols[i]] = true;
+			int d = n - i;
+			if (iCols[i] - d >= 0)
+				rows[iCols[i] - d] = true;
+			if (iCols[i] + d <= MAXQUEEN - 1)
+				rows[iCols[i] + d] = true;
+ 
+		}
+		
+		for (int k = 0; k < MAXQUEEN; k++) {
+			// ÅĞ¶Ï¸ÃĞĞÊÇ·ñºÏ·¨
+			if (rows[k])
+				continue;
+			// ÉèÖÃµ±Ç°ÁĞºÏ·¨Æå×ÓËùÔÚĞĞÊı
+			iCols[n] = k;
+			// µ±Ç°ÁĞ²»Îª×îºóÒ»ÁĞÊ±,µİ¹é
+			if (n < MAXQUEEN - 1) {
+				getArrangement(n + 1);
+			} else {
+				// ÀÛ¼Æ·½°¸¸öÊı
+				iNum++;
+				// ´òÓ¡ÆåÅÌĞÅÏ¢
+				printChessBoard();
 			}
 		}
-		for(int m=-7; m<8; m++){
-			if(m>=0&&iIfAvailable[i][m]==0){//ä¸çš‡ååŒè¡Œçš„æ ¼å­ä¸å¯è½å­
-				iIfAvailable[i][m] = 1;
-				changed[i][m] = 1;//
+	}
+	//´òÓ¡·½°¸
+	public void printChessBoard() {
+		System.out.println("µÚ" + iNum + "ÖÖ×ß·¨");
+		for (int i = 0; i < MAXQUEEN; i++) {
+			for (int j = 0; j < MAXQUEEN; j++) {
+				if (i == iCols[j]) {
+					System.out.print("0 ");
+				} else
+					System.out.print("+ ");
 			}
-			if(m>=0&&iIfAvailable[m][j]==0){//ä¸çš‡ååŒåˆ—çš„æ ¼å­ä¸å¯è½å­
-				iIfAvailable[m][j] = 1;
-				changed[m][j] = 1;
-			}
-			//ä¸çš‡ååŒæ–œçº¿çš„æ ¼å­ä¸å¯è½å­
-			if(i+m>=0&&i+m<8&j+m>=0&&j+m<8&&iIfAvailable[i+m][j+m]==0){
-				iIfAvailable[i+m][j+m] = 1;
-				changed[i+m][j+m] = 1;
-			}
-			if(i+m>=0&&i+m<8&j-m>=0&&j-m<8&&iIfAvailable[i+m][j-m]==0){
-				iIfAvailable[i+m][j-m] = 1;
-				changed[i+m][j-m] = 1;
-			}
+			System.out.println();
 		}
-		if(iCount==8){//ä¸€æ—¦ç¬¬å…«ä¸ªçš‡åå·²ç»ç¡®å®šä½ç½®ï¼Œåˆ™æ‰“å°æ–¹æ¡ˆï¼Œç»“æŸç¨‹åº
-			iCountNumber++;
-			System.out.println("å…«çš‡åç¬¬ "+iCountNumber+"ç§æ‘†æ³•ï¼š");
-			for(int m=0; m<8; m++){
-				for(int n=0; n<8; n++){
-					
-					System.out.print(iChessBoard[m][n]+" ");
-				}
-				System.out.println();
-			}
-			//System.exit(0);//è‹¥åˆ é™¤è¯¥è¡Œï¼Œåˆ™å¯æ‰“å°å‡ºæ‰€æœ‰çš„æ–¹æ¡ˆï¼Œå› æ–¹æ¡ˆæ•°é‡åºå¤§é€ æˆè¾“å‡ºè¿‡å¤šï¼Œæ•…ä¸ä½œæ­¤å¤„ç†
-		}
-		else{//å¦‚æœè¿˜æ²¡æœ‰å°†æ‰€æœ‰çš‡åçš„ä½ç½®ç¡®å®šï¼Œåˆ™ç»§ç»­å¯»æ‰¾
-			for(int m=0; m<8; m++){
-				for(int n=0; n<8; n++){
-					if(iIfAvailable[m][n]==0){
-						arrange(m,n);
-					}
-				}
-			}
-		}
-		//åœ¨å›æº¯ä¹‹å‰ï¼Œåº”å°†æœ¬è½®æ”¹å˜è¿‡çš„çŠ¶æ€æ¢å¤ä¸ºåŸæ ·
-		iCount--;
-		iChessBoard[i][j] = 0;
-		for(int m=-7; m<8; m++){
-			if(m>=0&&changed[i][m]==1){
-				iIfAvailable[i][m] = 0;
-			}
-			if(m>=0&&changed[m][j]==1){
-				iIfAvailable[m][j] = 0;
-			}
-			if(i+m>=0&&i+m<8&j+m>=0&&j+m<8&&changed[i+m][j+m]==1){
-				iIfAvailable[i+m][j+m] = 0;
-			}
-			if(i+m>=0&&i+m<8&j-m>=0&&j-m<8&&changed[i+m][j-m]==1){
-				iIfAvailable[i+m][j-m] = 0;
-			}
-		}
+ 
+	}
+ 
+	public static void main(String args[]) {
+		EightQueen queen = new EightQueen();
 	}
 }
